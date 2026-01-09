@@ -7,5 +7,6 @@ namespace PurrfectBlog.Web.ViewModels
     public required string Content { get; set; }
     public string? Category { get; set; }
     public DateTime CreatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
   }
 }

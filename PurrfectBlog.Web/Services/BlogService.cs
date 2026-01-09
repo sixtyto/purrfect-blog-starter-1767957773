@@ -22,31 +22,31 @@ namespace PurrfectBlog.Web.Services
 
     public async Task<PagedResult<BlogPost>> GetPostsAsync(int page, int pageSize)
     {
-        if (pageSize < 1)
-        {
-            pageSize = 10;
-        }
+      if (pageSize < 1)
+      {
+        pageSize = 10;
+      }
 
-        var query = _context.BlogPosts.AsNoTracking().OrderByDescending(p => p.CreatedAt);
+      var query = _context.BlogPosts.AsNoTracking().OrderByDescending(p => p.CreatedAt);
 
-        var totalCount = await query.CountAsync();
-        var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+      var totalCount = await query.CountAsync();
+      var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
 
-        var actualPage = Math.Max(1, Math.Min(page, Math.Max(1, totalPages)));
+      var actualPage = Math.Max(1, Math.Min(page, Math.Max(1, totalPages)));
 
-        var skip = (actualPage - 1) * pageSize;
-        var items = await query
-            .Skip(skip)
-            .Take(pageSize)
-            .ToListAsync();
+      var skip = (actualPage - 1) * pageSize;
+      var items = await query
+          .Skip(skip)
+          .Take(pageSize)
+          .ToListAsync();
 
-        return new PagedResult<BlogPost>
-        {
-            Items = items,
-            TotalCount = totalCount,
-            PageNumber = actualPage,
-            PageSize = pageSize
-        };
+      return new PagedResult<BlogPost>
+      {
+        Items = items,
+        TotalCount = totalCount,
+        PageNumber = actualPage,
+        PageSize = pageSize
+      };
     }
 
     public async Task<BlogPost?> GetPostByIdAsync(int id)
@@ -63,6 +63,30 @@ namespace PurrfectBlog.Web.Services
           .Take(count)
           .AsNoTracking()
           .ToListAsync();
+    }
+
+    public async Task UpdatePostAsync(BlogPost post)
+    {
+      var existingPost = await _context.BlogPosts.FindAsync(post.Id);
+      if (existingPost != null)
+      {
+        existingPost.Title = post.Title;
+        existingPost.Content = post.Content;
+        existingPost.Category = post.Category;
+        existingPost.UpdatedAt = DateTime.UtcNow;
+
+        await _context.SaveChangesAsync();
+      }
+    }
+
+    public async Task DeletePostAsync(int id)
+    {
+      var post = await _context.BlogPosts.FindAsync(id);
+      if (post != null)
+      {
+        _context.BlogPosts.Remove(post);
+        await _context.SaveChangesAsync();
+      }
     }
   }
 }

@@ -49,7 +49,8 @@ namespace PurrfectBlog.Web.Controllers
         Title = post.Title,
         Content = post.Content,
         Category = post.Category,
-        CreatedAt = post.CreatedAt
+        CreatedAt = post.CreatedAt,
+        UpdatedAt = post.UpdatedAt
       };
 
       return View(viewModel);
@@ -81,6 +82,64 @@ namespace PurrfectBlog.Web.Controllers
 
       TempData["SuccessMessage"] = "Purr-fect! Your blog post has been published successfully. 🐾";
 
+      return RedirectToAction("Index");
+    }
+
+    [HttpGet("EditPost/{id}")]
+    public async Task<IActionResult> Edit(int id)
+    {
+      var post = await _blogService.GetPostByIdAsync(id);
+      if (post == null)
+      {
+        return NotFound();
+      }
+
+      var viewModel = new EditPostViewModel
+      {
+        Id = post.Id,
+        Title = post.Title,
+        Content = post.Content,
+        Category = post.Category
+      };
+
+      return View(viewModel);
+    }
+
+    [HttpPost("EditPost/{id}")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(int id, EditPostViewModel model)
+    {
+      if (id != model.Id)
+      {
+        return BadRequest();
+      }
+
+      if (!ModelState.IsValid)
+      {
+        return View(model);
+      }
+
+      var post = new BlogPost
+      {
+        Id = model.Id,
+        Title = model.Title,
+        Content = model.Content,
+        Category = model.Category
+      };
+
+      await _blogService.UpdatePostAsync(post);
+
+      TempData["SuccessMessage"] = "Post updated successfully! 📝";
+      return RedirectToAction("Details", new { id = post.Id });
+    }
+
+    [HttpPost("DeletePost/{id}")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Delete(int id)
+    {
+      await _blogService.DeletePostAsync(id);
+
+      TempData["SuccessMessage"] = "Post deleted successfully. 👋";
       return RedirectToAction("Index");
     }
   }

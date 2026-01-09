@@ -19,6 +19,10 @@
 
         <p class="card-text text-muted small mb-3">
             Posted on @Model.CreatedAt.ToLocalTime().ToString("dd.MM.yyyy")
+            @if (Model.UpdatedAt.HasValue)
+            {
+            <span class="ms-1 small">(Updated: @Model.UpdatedAt.Value.ToLocalTime().ToString("dd.MM.yyyy HH:mm"))</span>
+            }
         </p>
 
         <p class="card-text flex-grow-1">

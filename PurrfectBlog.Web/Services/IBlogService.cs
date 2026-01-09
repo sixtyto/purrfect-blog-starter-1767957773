@@ -8,5 +8,7 @@ namespace PurrfectBlog.Web.Services
     Task<PagedResult<BlogPost>> GetPostsAsync(int page, int pageSize);
     Task<BlogPost?> GetPostByIdAsync(int id);
     Task<List<BlogPost>> GetRecentPostsAsync(int count);
+    Task UpdatePostAsync(BlogPost post);
+    Task DeletePostAsync(int id);
   }
 }
