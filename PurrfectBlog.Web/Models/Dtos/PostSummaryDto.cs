@@ -1,6 +1,6 @@
-namespace PurrfectBlog.Web.ViewModels
+namespace PurrfectBlog.Web.Models.Dtos
 {
-  public class PostSummaryViewModel
+  public class PostSummaryDto
   {
     public int Id { get; set; }
     public required string Title { get; set; }

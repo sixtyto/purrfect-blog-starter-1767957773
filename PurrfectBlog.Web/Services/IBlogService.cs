@@ -1,14 +1,15 @@
 using PurrfectBlog.Web.Models;
+using PurrfectBlog.Web.Models.Dtos;
 
 namespace PurrfectBlog.Web.Services
 {
   public interface IBlogService
   {
-    Task AddPostAsync(BlogPost post);
-    Task<PagedResult<BlogPost>> GetPostsAsync(int page, int pageSize);
-    Task<BlogPost?> GetPostByIdAsync(int id);
-    Task<List<BlogPost>> GetRecentPostsAsync(int count);
-    Task<bool> UpdatePostAsync(int id, string title, string content, string? category);
+    Task AddPostAsync(CreatePostDto createDto);
+    Task<PagedResult<PostSummaryDto>> GetPostsAsync(int page, int pageSize);
+    Task<PostDto?> GetPostByIdAsync(int id);
+    Task<List<PostSummaryDto>> GetRecentPostsAsync(int count);
+    Task<bool> UpdatePostAsync(UpdatePostDto updateDto);
     Task<bool> DeletePostAsync(int id);
   }
 }

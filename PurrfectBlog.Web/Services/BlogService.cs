@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 
 using PurrfectBlog.Web.Data;
 using PurrfectBlog.Web.Models;
+using PurrfectBlog.Web.Models.Dtos;
 
 namespace PurrfectBlog.Web.Services
 {
@@ -14,13 +15,20 @@ namespace PurrfectBlog.Web.Services
       _context = context;
     }
 
-    public async Task AddPostAsync(BlogPost post)
+    public async Task AddPostAsync(CreatePostDto createDto)
     {
+      var post = new BlogPost
+      {
+        Title = createDto.Title,
+        Content = createDto.Content,
+        Category = createDto.Category
+      };
+
       _context.BlogPosts.Add(post);
       await _context.SaveChangesAsync();
     }
 
-    public async Task<PagedResult<BlogPost>> GetPostsAsync(int page, int pageSize)
+    public async Task<PagedResult<PostSummaryDto>> GetPostsAsync(int page, int pageSize)
     {
       if (pageSize < 1)
       {
@@ -38,9 +46,18 @@ namespace PurrfectBlog.Web.Services
       var items = await query
           .Skip(skip)
           .Take(pageSize)
+          .Select(p => new PostSummaryDto
+          {
+            Id = p.Id,
+            Title = p.Title,
+            Category = p.Category,
+            CreatedAt = p.CreatedAt,
+            UpdatedAt = p.UpdatedAt,
+            Excerpt = p.Content.Length > 150 ? p.Content.Substring(0, 150) + "..." : p.Content
+          })
           .ToListAsync();
 
-      return new PagedResult<BlogPost>
+      return new PagedResult<PostSummaryDto>
       {
         Items = items,
         TotalCount = totalCount,
@@ -49,33 +66,57 @@ namespace PurrfectBlog.Web.Services
       };
     }
 
-    public async Task<BlogPost?> GetPostByIdAsync(int id)
+    public async Task<PostDto?> GetPostByIdAsync(int id)
     {
-      return await _context.BlogPosts
+      var post = await _context.BlogPosts
           .AsNoTracking()
           .FirstOrDefaultAsync(p => p.Id == id);
+
+      if (post == null)
+      {
+        return null;
+      }
+
+      return new PostDto
+      {
+        Id = post.Id,
+        Title = post.Title,
+        Content = post.Content,
+        Category = post.Category,
+        CreatedAt = post.CreatedAt,
+        UpdatedAt = post.UpdatedAt
+      };
     }
 
-    public async Task<List<BlogPost>> GetRecentPostsAsync(int count)
+    public async Task<List<PostSummaryDto>> GetRecentPostsAsync(int count)
     {
       return await _context.BlogPosts
           .OrderByDescending(p => p.CreatedAt)
           .Take(count)
           .AsNoTracking()
+          .Select(p => new PostSummaryDto
+          {
+            Id = p.Id,
+            Title = p.Title,
+            Category = p.Category,
+            CreatedAt = p.CreatedAt,
+            UpdatedAt = p.UpdatedAt,
+            Excerpt = p.Content.Length > 150 ? p.Content.Substring(0, 150) + "..." : p.Content
+          })
           .ToListAsync();
     }
 
-    public async Task<bool> UpdatePostAsync(int id, string title, string content, string? category)
+    public async Task<bool> UpdatePostAsync(UpdatePostDto updateDto)
     {
-      var existingPost = await _context.BlogPosts.FindAsync(id);
+      var existingPost = await _context.BlogPosts.FindAsync(updateDto.Id);
       if (existingPost == null)
       {
         return false;
       }
 
-      existingPost.Title = title;
-      existingPost.Content = content;
-      existingPost.Category = category;
+      existingPost.Title = updateDto.Title;
+      existingPost.Content = updateDto.Content;
+      existingPost.Category = updateDto.Category;
       existingPost.UpdatedAt = DateTime.UtcNow;
 
       await _context.SaveChangesAsync();

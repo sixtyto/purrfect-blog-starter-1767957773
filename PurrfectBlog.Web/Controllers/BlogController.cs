@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 
 using PurrfectBlog.Web.Models;
+using PurrfectBlog.Web.Models.Dtos;
 using PurrfectBlog.Web.Services;
 using PurrfectBlog.Web.ViewModels;
 
@@ -25,7 +26,15 @@ namespace PurrfectBlog.Web.Controllers
 
       var viewModel = new PagedResult<PostSummaryViewModel>
       {
-        Items = result.Items.Select(PostSummaryViewModel.FromEntity).ToList(),
+        Items = result.Items.Select(dto => new PostSummaryViewModel
+        {
+          Id = dto.Id,
+          Title = dto.Title,
+          Category = dto.Category,
+          CreatedAt = dto.CreatedAt,
+          UpdatedAt = dto.UpdatedAt,
+          Excerpt = dto.Excerpt
+        }).ToList(),
         TotalCount = result.TotalCount,
         PageNumber = result.PageNumber,
         PageSize = result.PageSize
@@ -37,20 +46,20 @@ namespace PurrfectBlog.Web.Controllers
     [HttpGet("Posts/{id}")]
     public async Task<IActionResult> Details(int id)
     {
-      var post = await _blogService.GetPostByIdAsync(id);
-      if (post == null)
+      var dto = await _blogService.GetPostByIdAsync(id);
+      if (dto == null)
       {
         return NotFound();
       }
 
       var viewModel = new PostDetailsViewModel
       {
-        Id = post.Id,
-        Title = post.Title,
-        Content = post.Content,
-        Category = post.Category,
-        CreatedAt = post.CreatedAt,
-        UpdatedAt = post.UpdatedAt
+        Id = dto.Id,
+        Title = dto.Title,
+        Content = dto.Content,
+        Category = dto.Category,
+        CreatedAt = dto.CreatedAt,
+        UpdatedAt = dto.UpdatedAt
       };
 
       return View(viewModel);
@@ -71,14 +80,14 @@ namespace PurrfectBlog.Web.Controllers
         return View(model);
       }
 
-      var post = new BlogPost
+      var createDto = new CreatePostDto
       {
         Title = model.Title,
         Content = model.Content,
         Category = model.Category
       };
 
-      await _blogService.AddPostAsync(post);
+      await _blogService.AddPostAsync(createDto);
 
       TempData["SuccessMessage"] = "Purr-fect! Your blog post has been published successfully. 🐾";
 
@@ -88,18 +97,18 @@ namespace PurrfectBlog.Web.Controllers
     [HttpGet("EditPost/{id}")]
     public async Task<IActionResult> Edit(int id)
     {
-      var post = await _blogService.GetPostByIdAsync(id);
-      if (post == null)
+      var dto = await _blogService.GetPostByIdAsync(id);
+      if (dto == null)
       {
         return NotFound();
       }
 
       var viewModel = new EditPostViewModel
       {
-        Id = post.Id,
-        Title = post.Title,
-        Content = post.Content,
-        Category = post.Category
+        Id = dto.Id,
+        Title = dto.Title,
+        Content = dto.Content,
+        Category = dto.Category
       };
 
       return View(viewModel);
@@ -119,7 +128,15 @@ namespace PurrfectBlog.Web.Controllers
         return View(model);
       }
 
-      var success = await _blogService.UpdatePostAsync(id, model.Title, model.Content, model.Category);
+      var updateDto = new UpdatePostDto
+      {
+        Id = model.Id,
+        Title = model.Title,
+        Content = model.Content,
+        Category = model.Category
+      };
+
+      var success = await _blogService.UpdatePostAsync(updateDto);
 
       if (!success)
       {

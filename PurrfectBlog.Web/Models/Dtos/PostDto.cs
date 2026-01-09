@@ -1,12 +1,12 @@
-namespace PurrfectBlog.Web.ViewModels
+namespace PurrfectBlog.Web.Models.Dtos
 {
-  public class PostSummaryViewModel
+  public class PostDto
   {
     public int Id { get; set; }
     public required string Title { get; set; }
+    public required string Content { get; set; }
     public string? Category { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
-    public string Excerpt { get; set; } = string.Empty;
   }
 }
