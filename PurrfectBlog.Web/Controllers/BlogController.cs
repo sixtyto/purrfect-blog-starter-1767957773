@@ -26,15 +26,7 @@ namespace PurrfectBlog.Web.Controllers
 
       var viewModel = new PagedResult<PostSummaryViewModel>
       {
-        Items = result.Items.Select(dto => new PostSummaryViewModel
-        {
-          Id = dto.Id,
-          Title = dto.Title,
-          Category = dto.Category,
-          CreatedAt = dto.CreatedAt,
-          UpdatedAt = dto.UpdatedAt,
-          Excerpt = dto.Excerpt
-        }).ToList(),
+        Items = result.Items.Select(PostSummaryViewModel.FromDto).ToList(),
         TotalCount = result.TotalCount,
         PageNumber = result.PageNumber,
         PageSize = result.PageSize

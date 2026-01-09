@@ -10,9 +10,19 @@ namespace PurrfectBlog.Web.Services
   {
     private readonly ApplicationDbContext _context;
 
+    private static readonly System.Linq.Expressions.Expression<Func<BlogPost, PostSummaryDto>> _postSummaryProjection = p => new PostSummaryDto
+    {
+        Id = p.Id,
+        Title = p.Title,
+        Category = p.Category,
+        CreatedAt = p.CreatedAt,
+        UpdatedAt = p.UpdatedAt,
+        Excerpt = p.Content.Length > 150 ? p.Content.Substring(0, 150) + "..." : p.Content
+    };
+
     public BlogService(ApplicationDbContext context)
     {
-      _context = context;
+        _context = context;
     }
 
     public async Task AddPostAsync(CreatePostDto createDto)
@@ -46,15 +56,7 @@ namespace PurrfectBlog.Web.Services
       var items = await query
           .Skip(skip)
           .Take(pageSize)
-          .Select(p => new PostSummaryDto
-          {
-            Id = p.Id,
-            Title = p.Title,
-            Category = p.Category,
-            CreatedAt = p.CreatedAt,
-            UpdatedAt = p.UpdatedAt,
-            Excerpt = p.Content.Length > 150 ? p.Content.Substring(0, 150) + "..." : p.Content
-          })
+          .Select(_postSummaryProjection)
           .ToListAsync();
 
       return new PagedResult<PostSummaryDto>
@@ -94,46 +96,28 @@ namespace PurrfectBlog.Web.Services
           .OrderByDescending(p => p.CreatedAt)
           .Take(count)
           .AsNoTracking()
-          .Select(p => new PostSummaryDto
-          {
-            Id = p.Id,
-            Title = p.Title,
-            Category = p.Category,
-            CreatedAt = p.CreatedAt,
-            UpdatedAt = p.UpdatedAt,
-            Excerpt = p.Content.Length > 150 ? p.Content.Substring(0, 150) + "..." : p.Content
-          })
+          .Select(_postSummaryProjection)
           .ToListAsync();
     }
 
     public async Task<bool> UpdatePostAsync(UpdatePostDto updateDto)
     {
-      var existingPost = await _context.BlogPosts.FindAsync(updateDto.Id);
-      if (existingPost == null)
-      {
-        return false;
-      }
-
-      existingPost.Title = updateDto.Title;
-      existingPost.Content = updateDto.Content;
-      existingPost.Category = updateDto.Category;
-      existingPost.UpdatedAt = DateTime.UtcNow;
-
-      await _context.SaveChangesAsync();
-      return true;
+      var affectedRows = await _context.BlogPosts
+          .Where(p => p.Id == updateDto.Id)
+          .ExecuteUpdateAsync(s => s
+              .SetProperty(p => p.Title, updateDto.Title)
+              .SetProperty(p => p.Content, updateDto.Content)
+              .SetProperty(p => p.Category, updateDto.Category)
+              .SetProperty(p => p.UpdatedAt, DateTime.UtcNow));
+      return affectedRows > 0;
     }
 
     public async Task<bool> DeletePostAsync(int id)
     {
-      var post = await _context.BlogPosts.FindAsync(id);
-      if (post == null)
-      {
-        return false;
-      }
-
-      _context.BlogPosts.Remove(post);
-      await _context.SaveChangesAsync();
-      return true;
+      var affectedRows = await _context.BlogPosts
+          .Where(p => p.Id == id)
+          .ExecuteDeleteAsync();
+      return affectedRows > 0;
     }
   }
 }
