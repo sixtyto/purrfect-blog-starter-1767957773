@@ -21,6 +21,7 @@ namespace PurrfectBlog.Web.Controllers
         }
 
         [HttpPost("CreatePost")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(CreatePostViewModel model)
         {
             if (!ModelState.IsValid)

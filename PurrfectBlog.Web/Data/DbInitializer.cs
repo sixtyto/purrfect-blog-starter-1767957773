@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using PurrfectBlog.Web.Models;
 
 namespace PurrfectBlog.Web.Data
@@ -6,7 +7,7 @@ namespace PurrfectBlog.Web.Data
     {
         public static void Initialize(ApplicationDbContext context)
         {
-            context.Database.EnsureCreated();
+            context.Database.Migrate();
 
             // Look for any posts.
             if (context.BlogPosts.Any())

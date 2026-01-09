@@ -22,6 +22,7 @@ namespace PurrfectBlog.Web.Services
         public async Task<List<BlogPost>> GetAllPostsAsync()
         {
             return await _context.BlogPosts
+                .AsNoTracking()
                 .OrderByDescending(p => p.CreatedAt)
                 .ToListAsync();
         }
