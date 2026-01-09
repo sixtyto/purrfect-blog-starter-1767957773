@@ -119,25 +119,27 @@ namespace PurrfectBlog.Web.Controllers
         return View(model);
       }
 
-      var post = new BlogPost
-      {
-        Id = model.Id,
-        Title = model.Title,
-        Content = model.Content,
-        Category = model.Category
-      };
+      var success = await _blogService.UpdatePostAsync(id, model.Title, model.Content, model.Category);
 
-      await _blogService.UpdatePostAsync(post);
+      if (!success)
+      {
+        return NotFound();
+      }
 
       TempData["SuccessMessage"] = "Post updated successfully! 📝";
-      return RedirectToAction("Details", new { id = post.Id });
+      return RedirectToAction("Details", new { id = model.Id });
     }
 
     [HttpPost("DeletePost/{id}")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Delete(int id)
     {
-      await _blogService.DeletePostAsync(id);
+      var success = await _blogService.DeletePostAsync(id);
+
+      if (!success)
+      {
+        return NotFound();
+      }
 
       TempData["SuccessMessage"] = "Post deleted successfully. 👋";
       return RedirectToAction("Index");

@@ -35,7 +35,9 @@ else
 
 app.UseStatusCodePagesWithReExecute("/Home/Error", "?statusCode={0}");
 
-app.UseHttpsRedirection(); app.UseRouting();
+app.UseHttpsRedirection();
+
+app.UseRouting();
 
 app.UseAuthorization();
 

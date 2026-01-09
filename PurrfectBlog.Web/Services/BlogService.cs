@@ -65,28 +65,34 @@ namespace PurrfectBlog.Web.Services
           .ToListAsync();
     }
 
-    public async Task UpdatePostAsync(BlogPost post)
+    public async Task<bool> UpdatePostAsync(int id, string title, string content, string? category)
     {
-      var existingPost = await _context.BlogPosts.FindAsync(post.Id);
-      if (existingPost != null)
+      var existingPost = await _context.BlogPosts.FindAsync(id);
+      if (existingPost == null)
       {
-        existingPost.Title = post.Title;
-        existingPost.Content = post.Content;
-        existingPost.Category = post.Category;
-        existingPost.UpdatedAt = DateTime.UtcNow;
-
-        await _context.SaveChangesAsync();
+        return false;
       }
+
+      existingPost.Title = title;
+      existingPost.Content = content;
+      existingPost.Category = category;
+      existingPost.UpdatedAt = DateTime.UtcNow;
+
+      await _context.SaveChangesAsync();
+      return true;
     }
 
-    public async Task DeletePostAsync(int id)
+    public async Task<bool> DeletePostAsync(int id)
     {
       var post = await _context.BlogPosts.FindAsync(id);
-      if (post != null)
+      if (post == null)
       {
-        _context.BlogPosts.Remove(post);
-        await _context.SaveChangesAsync();
+        return false;
       }
+
+      _context.BlogPosts.Remove(post);
+      await _context.SaveChangesAsync();
+      return true;
     }
   }
 }
