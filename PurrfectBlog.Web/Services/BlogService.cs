@@ -22,23 +22,31 @@ namespace PurrfectBlog.Web.Services
 
     public async Task<PagedResult<BlogPost>> GetPostsAsync(int page, int pageSize)
     {
-      var query = _context.BlogPosts.AsNoTracking().OrderByDescending(p => p.CreatedAt);
+        if (pageSize < 1)
+        {
+            pageSize = 10;
+        }
 
-      var totalCount = await query.CountAsync();
-      var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
-      var skip = Math.Max(0, Math.Min(page, totalPages) - 1) * pageSize;
-      var items = await query
-          .Skip(skip)
-          .Take(pageSize)
-          .ToListAsync();
+        var query = _context.BlogPosts.AsNoTracking().OrderByDescending(p => p.CreatedAt);
 
-      return new PagedResult<BlogPost>
-      {
-        Items = items,
-        TotalCount = totalCount,
-        PageNumber = page,
-        PageSize = pageSize
-      };
+        var totalCount = await query.CountAsync();
+        var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+
+        var actualPage = Math.Max(1, Math.Min(page, Math.Max(1, totalPages)));
+
+        var skip = (actualPage - 1) * pageSize;
+        var items = await query
+            .Skip(skip)
+            .Take(pageSize)
+            .ToListAsync();
+
+        return new PagedResult<BlogPost>
+        {
+            Items = items,
+            TotalCount = totalCount,
+            PageNumber = actualPage,
+            PageSize = pageSize
+        };
     }
 
     public async Task<BlogPost?> GetPostByIdAsync(int id)
