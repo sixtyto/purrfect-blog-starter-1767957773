@@ -17,8 +17,12 @@
                    class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">Home</a>
             </li>
             <li class="nav-item">
+                <a asp-controller="Blog" asp-action="Index" 
+                   class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Blog" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")">Posts</a>
+            </li>
+            <li class="nav-item">
                 <a asp-controller="Blog" asp-action="Create" 
-                   class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Blog" ? "active" : "")">Create Post</a>
+                   class="nav-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Blog" && ViewContext.RouteData.Values["Action"]?.ToString() == "Create" ? "active" : "")">Create Post</a>
             </li>
             <li class="nav-item">
                 <a asp-controller="Home" asp-action="Privacy" 
