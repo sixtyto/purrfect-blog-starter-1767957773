@@ -9,7 +9,7 @@ namespace PurrfectBlog.Web.ViewModels
         public string Title { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Don't leave us hanging! Write some content.")]
-        [MinLength(10, ErrorMessage = "Too short! Express yourself in at least 10 characters.")]
+        [StringLength(10000, MinimumLength = 10, ErrorMessage = "Content must be between 10 and 10000 characters.")]
         public string Content { get; set; } = string.Empty;
 
         [Display(Name = "Category (Optional)")]

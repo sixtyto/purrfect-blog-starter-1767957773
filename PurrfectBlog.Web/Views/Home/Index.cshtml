@@ -1,8 +1,39 @@
+@model List<PurrfectBlog.Web.ViewModels.PostSummaryViewModel>
+
 @{
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome to Purrfect Blog</h1>
-    <p>The purr-fect place to share your thoughts!</p>
+<div class="text-center mb-5 mt-4">
+    <h1 class="display-4 fw-bold">Welcome to Purrfect Blog 🐱</h1>
+    <p class="lead text-muted">The purr-fect place to share your thoughts!</p>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="row mb-3 align-items-center">
+            <div class="col">
+                <h3 class="fw-bold mb-0">Latest from the Blog</h3>
+            </div>
+            <div class="col-auto">
+                <a asp-controller="Blog" asp-action="Index" class="btn btn-link text-decoration-none p-0">View all &rarr;</a>
+            </div>
+        </div>
+        
+        <div class="row">
+            @foreach (var post in Model)
+            {
+                <div class="col-md-4 mb-4">
+                    <partial name="_PostCard" model="post" />
+                </div>
+            }
+
+            @if (!Model.Any())
+            {
+                <div class="col-12 text-center text-muted py-5">
+                    <p>No posts yet. Be the first to <a asp-controller="Blog" asp-action="Create">create one</a>!</p>
+                </div>
+            }
+        </div>
+    </div>
 </div>

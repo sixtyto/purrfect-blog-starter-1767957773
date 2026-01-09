@@ -14,6 +14,35 @@ namespace PurrfectBlog.Web.Controllers
             _blogService = blogService;
         }
 
+        [HttpGet("Posts")]
+        public async Task<IActionResult> Index(int page = 1)
+        {
+            const int pageSize = 5;
+            var result = await _blogService.GetPostsAsync(page, pageSize);
+            
+            var viewModel = new PagedResult<PostSummaryViewModel>
+            {
+                Items = result.Items.Select(PostSummaryViewModel.FromEntity).ToList(),
+                TotalCount = result.TotalCount,
+                PageNumber = result.PageNumber,
+                PageSize = result.PageSize
+            };
+
+            return View(viewModel);
+        }
+
+        [HttpGet("Posts/{id}")]
+        public async Task<IActionResult> Details(int id)
+        {
+            var post = await _blogService.GetPostByIdAsync(id);
+            if (post == null)
+            {
+                return NotFound();
+            }
+
+            return View(post);
+        }
+
         [HttpGet("CreatePost")]
         public IActionResult Create()
         {
@@ -40,7 +69,7 @@ namespace PurrfectBlog.Web.Controllers
 
             TempData["SuccessMessage"] = "Purr-fect! Your blog post has been published successfully. 🐾";
 
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Index");
         }
     }
 }

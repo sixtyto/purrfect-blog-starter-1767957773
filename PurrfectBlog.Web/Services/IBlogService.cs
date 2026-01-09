@@ -5,6 +5,8 @@ namespace PurrfectBlog.Web.Services
     public interface IBlogService
     {
         Task AddPostAsync(BlogPost post);
-        Task<List<BlogPost>> GetAllPostsAsync();
+        Task<PagedResult<BlogPost>> GetPostsAsync(int page, int pageSize);
+        Task<BlogPost?> GetPostByIdAsync(int id);
+        Task<List<BlogPost>> GetRecentPostsAsync(int count);
     }
 }

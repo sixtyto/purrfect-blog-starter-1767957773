@@ -1,0 +1,45 @@
+@model PurrfectBlog.Web.Models.PagedResult<PurrfectBlog.Web.ViewModels.PostSummaryViewModel>
+
+@{
+    ViewData["Title"] = "All Posts";
+}
+
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <h1 class="fw-bold mb-4">All Blog Posts 📚</h1>
+
+        <div class="row">
+            @foreach (var post in Model.Items)
+            {
+                <div class="col-12 mb-4">
+                    <partial name="_PostCard" model="post" />
+                </div>
+            }
+        </div>
+
+        <nav aria-label="Page navigation" class="mt-4">
+            <ul class="pagination justify-content-center">
+                @if (@Model.HasPreviousPage)
+                {
+                <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                    <a class="page-link" asp-action="Index" asp-route-page="@(Model.PageNumber - 1)">Previous</a>
+                </li>
+                }
+
+                @for (int i = 1; i <= Model.TotalPages; i++)
+                {
+                    <li class="page-item @(i == Model.PageNumber ? "active" : "")">
+                        <a class="page-link" asp-action="Index" asp-route-page="@i">@i</a>
+                    </li>
+                }
+
+                @if (@Model.HasNextPage)
+                {
+                <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                    <a class="page-link" asp-action="Index" asp-route-page="@(Model.PageNumber + 1)">Next</a>
+                </li>
+                }
+            </ul>
+        </nav>
+    </div>
+</div>
