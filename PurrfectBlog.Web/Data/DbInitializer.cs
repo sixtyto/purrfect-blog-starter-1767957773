@@ -1,22 +1,23 @@
 using Microsoft.EntityFrameworkCore;
+
 using PurrfectBlog.Web.Models;
 
 namespace PurrfectBlog.Web.Data
 {
-    public static class DbInitializer
+  public static class DbInitializer
+  {
+    public static void Initialize(ApplicationDbContext context)
     {
-        public static void Initialize(ApplicationDbContext context)
-        {
-            context.Database.Migrate();
+      context.Database.Migrate();
 
-            // Look for any posts.
-            if (context.BlogPosts.Any())
-            {
-                return;   // DB has been seeded
-            }
+      // Look for any posts.
+      if (context.BlogPosts.Any())
+      {
+        return;   // DB has been seeded
+      }
 
-            var posts = new BlogPost[]
-            {
+      var posts = new BlogPost[]
+      {
                 new BlogPost
                 {
                     Title = "Why Cats Are Superior",
@@ -38,10 +39,10 @@ namespace PurrfectBlog.Web.Data
                     Category = "Conspiracy",
                     CreatedAt = DateTime.UtcNow
                 }
-            };
+      };
 
-            context.BlogPosts.AddRange(posts);
-            context.SaveChanges();
-        }
+      context.BlogPosts.AddRange(posts);
+      context.SaveChanges();
     }
+  }
 }
