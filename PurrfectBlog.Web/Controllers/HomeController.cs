@@ -22,18 +22,22 @@ namespace PurrfectBlog.Web.Controllers
     public async Task<IActionResult> Index()
     {
       var recentPosts = await _blogService.GetRecentPostsAsync(3);
-      var viewModels = recentPosts.Select(PostSummaryViewModel.FromEntity).ToList();
+      var viewModels = recentPosts.Select(PostSummaryViewModel.FromDto).ToList();
       return View(viewModels);
     }
-
     public IActionResult Privacy()
     {
       return View();
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
+    public IActionResult Error(int? statusCode = null)
     {
+      if (statusCode == 404)
+      {
+        ViewData["ErrorMessage"] = "Oops! The cat must have knocked this page off the table. (404 Not Found)";
+        return View("NotFound");
+      }
       return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
   }

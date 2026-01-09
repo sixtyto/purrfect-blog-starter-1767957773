@@ -1,4 +1,4 @@
-using PurrfectBlog.Web.Models;
+using PurrfectBlog.Web.Models.Dtos;
 
 namespace PurrfectBlog.Web.ViewModels
 {
@@ -8,21 +8,19 @@ namespace PurrfectBlog.Web.ViewModels
     public required string Title { get; set; }
     public string? Category { get; set; }
     public DateTime CreatedAt { get; set; }
+    public DateTime? UpdatedAt { get; set; }
     public string Excerpt { get; set; } = string.Empty;
 
-    public static PostSummaryViewModel FromEntity(BlogPost post)
+    public static PostSummaryViewModel FromDto(PostSummaryDto dto)
     {
-      var excerpt = (post.Content?.Length ?? 0) > 150
-          ? post.Content!.Substring(0, 150) + "..."
-          : post.Content ?? string.Empty;
-
       return new PostSummaryViewModel
       {
-        Id = post.Id,
-        Title = post.Title,
-        Category = post.Category,
-        CreatedAt = post.CreatedAt,
-        Excerpt = excerpt
+        Id = dto.Id,
+        Title = dto.Title,
+        Category = dto.Category,
+        CreatedAt = dto.CreatedAt,
+        UpdatedAt = dto.UpdatedAt,
+        Excerpt = dto.Excerpt
       };
     }
   }

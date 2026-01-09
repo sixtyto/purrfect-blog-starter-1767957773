@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 
 using PurrfectBlog.Web.Models;
+using PurrfectBlog.Web.Models.Dtos;
 using PurrfectBlog.Web.Services;
 using PurrfectBlog.Web.ViewModels;
 
@@ -25,7 +26,7 @@ namespace PurrfectBlog.Web.Controllers
 
       var viewModel = new PagedResult<PostSummaryViewModel>
       {
-        Items = result.Items.Select(PostSummaryViewModel.FromEntity).ToList(),
+        Items = result.Items.Select(PostSummaryViewModel.FromDto).ToList(),
         TotalCount = result.TotalCount,
         PageNumber = result.PageNumber,
         PageSize = result.PageSize
@@ -37,24 +38,16 @@ namespace PurrfectBlog.Web.Controllers
     [HttpGet("Posts/{id}")]
     public async Task<IActionResult> Details(int id)
     {
-      var post = await _blogService.GetPostByIdAsync(id);
-      if (post == null)
+      var dto = await _blogService.GetPostByIdAsync(id);
+      if (dto == null)
       {
         return NotFound();
       }
 
-      var viewModel = new PostDetailsViewModel
-      {
-        Id = post.Id,
-        Title = post.Title,
-        Content = post.Content,
-        Category = post.Category,
-        CreatedAt = post.CreatedAt
-      };
+      var viewModel = PostDetailsViewModel.FromDto(dto);
 
       return View(viewModel);
     }
-
     [HttpGet("CreatePost")]
     public IActionResult Create()
     {
@@ -70,17 +63,78 @@ namespace PurrfectBlog.Web.Controllers
         return View(model);
       }
 
-      var post = new BlogPost
+      var createDto = new CreatePostDto
       {
         Title = model.Title,
         Content = model.Content,
         Category = model.Category
       };
 
-      await _blogService.AddPostAsync(post);
+      await _blogService.AddPostAsync(createDto);
 
       TempData["SuccessMessage"] = "Purr-fect! Your blog post has been published successfully. 🐾";
 
+      return RedirectToAction("Index");
+    }
+
+    [HttpGet("EditPost/{id}")]
+    public async Task<IActionResult> Edit(int id)
+    {
+      var dto = await _blogService.GetPostByIdAsync(id);
+      if (dto == null)
+      {
+        return NotFound();
+      }
+
+      var viewModel = EditPostViewModel.FromDto(dto);
+
+      return View(viewModel);
+    }
+    [HttpPost("EditPost/{id}")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Edit(int id, EditPostViewModel model)
+    {
+      if (id != model.Id)
+      {
+        return BadRequest();
+      }
+
+      if (!ModelState.IsValid)
+      {
+        return View(model);
+      }
+
+      var updateDto = new UpdatePostDto
+      {
+        Id = model.Id,
+        Title = model.Title,
+        Content = model.Content,
+        Category = model.Category
+      };
+
+      var success = await _blogService.UpdatePostAsync(updateDto);
+
+      if (!success)
+      {
+        return NotFound();
+      }
+
+      TempData["SuccessMessage"] = "Post updated successfully! 📝";
+      return RedirectToAction("Details", new { id = model.Id });
+    }
+
+    [HttpPost("DeletePost/{id}")]
+    [ValidateAntiForgeryToken]
+    public async Task<IActionResult> Delete(int id)
+    {
+      var success = await _blogService.DeletePostAsync(id);
+
+      if (!success)
+      {
+        return NotFound();
+      }
+
+      TempData["SuccessMessage"] = "Post deleted successfully. 👋";
       return RedirectToAction("Index");
     }
   }
