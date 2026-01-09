@@ -12,9 +12,9 @@ namespace PurrfectBlog.Web.ViewModels
 
         public static PostSummaryViewModel FromEntity(BlogPost post)
         {
-            var excerpt = post.Content.Length > 150 
-                ? post.Content.Substring(0, 150) + "..." 
-                : post.Content;
+            var excerpt = (post.Content?.Length ?? 0) > 150 
+                ? post.Content!.Substring(0, 150) + "..." 
+                : post.Content ?? string.Empty;
 
             return new PostSummaryViewModel
             {

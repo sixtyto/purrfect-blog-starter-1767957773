@@ -21,7 +21,7 @@
             <ul class="pagination justify-content-center">
                 @if (@Model.HasPreviousPage)
                 {
-                <li class="page-item @(Model.HasPreviousPage ? "" : "disabled")">
+                <li class="page-item">
                     <a class="page-link" asp-action="Index" asp-route-page="@(Model.PageNumber - 1)">Previous</a>
                 </li>
                 }
@@ -35,7 +35,7 @@
 
                 @if (@Model.HasNextPage)
                 {
-                <li class="page-item @(Model.HasNextPage ? "" : "disabled")">
+                <li class="page-item">
                     <a class="page-link" asp-action="Index" asp-route-page="@(Model.PageNumber + 1)">Next</a>
                 </li>
                 }

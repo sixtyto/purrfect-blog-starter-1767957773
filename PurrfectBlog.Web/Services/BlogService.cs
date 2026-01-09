@@ -41,7 +41,9 @@ namespace PurrfectBlog.Web.Services
 
         public async Task<BlogPost?> GetPostByIdAsync(int id)
         {
-            return await _context.BlogPosts.FindAsync(id);
+            return await _context.BlogPosts
+                .AsNoTracking()
+                .FirstOrDefaultAsync(p => p.Id == id);
         }
 
         public async Task<List<BlogPost>> GetRecentPostsAsync(int count)
@@ -49,6 +51,7 @@ namespace PurrfectBlog.Web.Services
             return await _context.BlogPosts
                 .OrderByDescending(p => p.CreatedAt)
                 .Take(count)
+                .AsNoTracking()
                 .ToListAsync();
         }
     }
