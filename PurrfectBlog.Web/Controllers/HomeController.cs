@@ -32,8 +32,13 @@ namespace PurrfectBlog.Web.Controllers
     }
 
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-    public IActionResult Error()
+    public IActionResult Error(int? statusCode = null)
     {
+      if (statusCode == 404)
+      {
+        ViewData["ErrorMessage"] = "Oops! The cat must have knocked this page off the table. (404 Not Found)";
+        return View("NotFound");
+      }
       return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
     }
   }

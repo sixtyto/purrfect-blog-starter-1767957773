@@ -1,0 +1,10 @@
+@{
+ViewData["Title"] = "Page Not Found";
+}
+
+<div class="text-center py-5">
+    <h1 class="display-1 fw-bold text-muted">404</h1>
+    <h2 class="mb-4">@ViewData["ErrorMessage"]</h2>
+    <p class="lead mb-5">We couldn't find the blog post or page you were looking for.</p>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-primary btn-lg">Return to Safety 🏠</a>
+</div>
