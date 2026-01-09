@@ -12,17 +12,17 @@ namespace PurrfectBlog.Web.Services
 
     private static readonly System.Linq.Expressions.Expression<Func<BlogPost, PostSummaryDto>> _postSummaryProjection = p => new PostSummaryDto
     {
-        Id = p.Id,
-        Title = p.Title,
-        Category = p.Category,
-        CreatedAt = p.CreatedAt,
-        UpdatedAt = p.UpdatedAt,
-        Excerpt = p.Content.Length > 150 ? p.Content.Substring(0, 150) + "..." : p.Content
+      Id = p.Id,
+      Title = p.Title,
+      Category = p.Category,
+      CreatedAt = p.CreatedAt,
+      UpdatedAt = p.UpdatedAt,
+      Excerpt = p.Content.Length > 150 ? p.Content.Substring(0, 150) + "..." : p.Content
     };
 
     public BlogService(ApplicationDbContext context)
     {
-        _context = context;
+      _context = context;
     }
 
     public async Task AddPostAsync(CreatePostDto createDto)

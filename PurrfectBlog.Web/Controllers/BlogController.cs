@@ -44,19 +44,10 @@ namespace PurrfectBlog.Web.Controllers
         return NotFound();
       }
 
-      var viewModel = new PostDetailsViewModel
-      {
-        Id = dto.Id,
-        Title = dto.Title,
-        Content = dto.Content,
-        Category = dto.Category,
-        CreatedAt = dto.CreatedAt,
-        UpdatedAt = dto.UpdatedAt
-      };
+      var viewModel = PostDetailsViewModel.FromDto(dto);
 
       return View(viewModel);
     }
-
     [HttpGet("CreatePost")]
     public IActionResult Create()
     {
@@ -95,17 +86,10 @@ namespace PurrfectBlog.Web.Controllers
         return NotFound();
       }
 
-      var viewModel = new EditPostViewModel
-      {
-        Id = dto.Id,
-        Title = dto.Title,
-        Content = dto.Content,
-        Category = dto.Category
-      };
+      var viewModel = EditPostViewModel.FromDto(dto);
 
       return View(viewModel);
     }
-
     [HttpPost("EditPost/{id}")]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> Edit(int id, EditPostViewModel model)

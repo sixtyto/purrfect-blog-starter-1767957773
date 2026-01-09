@@ -22,15 +22,7 @@ namespace PurrfectBlog.Web.Controllers
     public async Task<IActionResult> Index()
     {
       var recentPosts = await _blogService.GetRecentPostsAsync(3);
-      var viewModels = recentPosts.Select(dto => new PostSummaryViewModel
-      {
-        Id = dto.Id,
-        Title = dto.Title,
-        Category = dto.Category,
-        CreatedAt = dto.CreatedAt,
-        UpdatedAt = dto.UpdatedAt,
-        Excerpt = dto.Excerpt
-      }).ToList();
+      var viewModels = recentPosts.Select(PostSummaryViewModel.FromDto).ToList();
       return View(viewModels);
     }
     public IActionResult Privacy()

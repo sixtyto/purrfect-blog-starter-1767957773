@@ -1,5 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 
+using PurrfectBlog.Web.Models.Dtos;
+
 namespace PurrfectBlog.Web.ViewModels
 {
   public class EditPostViewModel
@@ -17,5 +19,16 @@ namespace PurrfectBlog.Web.ViewModels
     [Display(Name = "Category (Optional)")]
     [StringLength(50, ErrorMessage = "Category name is too long.")]
     public string? Category { get; set; }
+
+    public static EditPostViewModel FromDto(PostDto dto)
+    {
+      return new EditPostViewModel
+      {
+        Id = dto.Id,
+        Title = dto.Title,
+        Content = dto.Content,
+        Category = dto.Category
+      };
+    }
   }
 }

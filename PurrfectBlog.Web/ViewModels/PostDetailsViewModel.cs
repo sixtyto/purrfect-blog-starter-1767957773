@@ -1,3 +1,5 @@
+using PurrfectBlog.Web.Models.Dtos;
+
 namespace PurrfectBlog.Web.ViewModels
 {
   public class PostDetailsViewModel
@@ -8,5 +10,18 @@ namespace PurrfectBlog.Web.ViewModels
     public string? Category { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime? UpdatedAt { get; set; }
+
+    public static PostDetailsViewModel FromDto(PostDto dto)
+    {
+      return new PostDetailsViewModel
+      {
+        Id = dto.Id,
+        Title = dto.Title,
+        Content = dto.Content,
+        Category = dto.Category,
+        CreatedAt = dto.CreatedAt,
+        UpdatedAt = dto.UpdatedAt
+      };
+    }
   }
 }
