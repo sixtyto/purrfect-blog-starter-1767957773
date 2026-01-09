@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using PurrfectBlog.Web.Data;
+using PurrfectBlog.Web.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,7 +10,17 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+builder.Services.AddScoped<IBlogService, BlogService>();
+
 var app = builder.Build();
+
+// Seed the database
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<ApplicationDbContext>();
+    DbInitializer.Initialize(context);
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

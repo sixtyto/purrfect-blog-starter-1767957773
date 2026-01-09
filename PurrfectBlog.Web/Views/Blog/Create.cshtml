@@ -1,0 +1,47 @@
+@model PurrfectBlog.Web.ViewModels.CreatePostViewModel
+
+@{
+    ViewData["Title"] = "Create a New Post";
+}
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h2 class="mb-0">Create a New Post 📝</h2>
+            </div>
+            <div class="card-body">
+                <form asp-action="Create" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="Title" class="form-label fw-bold"></label>
+                        <input asp-for="Title" class="form-control" placeholder="Enter a catchy title..." />
+                        <span asp-validation-for="Title" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label asp-for="Category" class="form-label fw-bold"></label>
+                        <input asp-for="Category" class="form-control" placeholder="e.g. Lifestyle, Tech, Cats" />
+                        <span asp-validation-for="Category" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group mb-4">
+                        <label asp-for="Content" class="form-label fw-bold"></label>
+                        <textarea asp-for="Content" class="form-control" rows="10" placeholder="Share your thoughts..."></textarea>
+                        <span asp-validation-for="Content" class="text-danger"></span>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-primary btn-lg">Publish Post 🚀</button>
+                        <a asp-controller="Home" asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
