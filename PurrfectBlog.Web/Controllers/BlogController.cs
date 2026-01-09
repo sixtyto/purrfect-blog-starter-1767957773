@@ -17,6 +17,8 @@ namespace PurrfectBlog.Web.Controllers
         [HttpGet("Posts")]
         public async Task<IActionResult> Index(int page = 1)
         {
+            page = Math.Max(1, page);
+
             const int pageSize = 5;
             var result = await _blogService.GetPostsAsync(page, pageSize);
             
@@ -40,7 +42,16 @@ namespace PurrfectBlog.Web.Controllers
                 return NotFound();
             }
 
-            return View(post);
+            var viewModel = new PostDetailsViewModel
+            {
+                Id = post.Id,
+                Title = post.Title,
+                Content = post.Content,
+                Category = post.Category,
+                CreatedAt = post.CreatedAt
+            };
+
+            return View(viewModel);
         }
 
         [HttpGet("CreatePost")]
